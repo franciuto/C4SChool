@@ -1,0 +1,13 @@
+void printMatrice(int matrix[righe][colonne])
+{
+    int i, j;       // Dichiarazione variabili locali
+    // Stampa scorrendo le righe e le colonne
+    for (i = 0; i < righe; i++)     
+    {
+        for (j = 0; j < colonne; j++)
+        {
+            printf("%d\t", matrix[i][j]);       // Uso \t per fare una tabulazione e avere tutto stampato in modo corretto
+        }
+        printf("\n");       // Vado a capo dopo ogni riga
+    }
+}

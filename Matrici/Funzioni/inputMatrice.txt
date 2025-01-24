@@ -1,0 +1,14 @@
+void inputMatrice(int matrix[dimension][dimension])
+{
+    int i, j, to_insert;
+    // Riempio la matrice di valori che l'utente inserisce in corrispondenza di indici che gli vengono stampati
+    for (i = 0; i < dimension; i++)
+    {
+        for (j = 0; j < dimension; j++)
+        {
+            printf("Inserisci elemento a %d , %d: ", i, j);
+            scanf("%d", &to_insert);
+            matrix[i][j] = to_insert;
+        }
+    }
+}

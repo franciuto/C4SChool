@@ -1,0 +1,12 @@
+void generateMatrice(int genMatrix[righe][colonne])
+{
+    int i, j;
+    // Riempio la matrice di valori random scorrendo per righe e colonne
+    for (i = 0; i < righe; i++)
+    {
+        for (j = 0; j < colonne; j++)
+        {
+            genMatrix[i][j] = (rand() % 50) - 1;
+        }
+    }
+}
