@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define dimensione 6
+#define dimensione 3
+#define range 100
 
 void fillMatrix(int matrix[dimensione][dimensione])
 {
@@ -11,7 +12,7 @@ void fillMatrix(int matrix[dimensione][dimensione])
     {
         for (j = 0; j < dimensione; j++)
         {
-            matrix[i][j] = (rand() % 30) + 1;
+            matrix[i][j] = (rand() % range);
         }
     }
 }
@@ -29,9 +30,41 @@ void printMatrice(int matrix[dimensione][dimensione])
     }
 }
 
+int massimoMatrice(int matrix[dimensione][dimensione])
+{
+    int i, j, max = 0;
+    for (i = 0; i < dimensione; i++)
+    {
+        for (j = 0; j < dimensione; j++)
+        {
+            if (matrix[i][j] > max)
+            {
+                max = matrix[i][j];
+            }
+        }
+    }
+    return max;
+}
+
+int minimoMatrice(int matrix[dimensione][dimensione])
+{
+    int i, j, min = range;
+    for (i = 0; i < dimensione; i++)
+    {
+        for (j = 0; j < dimensione; j++)
+        {
+            if (matrix[i][j] < min)
+            {
+                min = matrix[i][j];
+            }
+        }
+    }
+    return min;
+}
+
 int main()
 {
-    srand(time(NULL)); 
+    srand(time(NULL));
     int i, j, max = 0, righe_max = 0, colonne_max = 0;
     int matrice[dimensione][dimensione];
 
@@ -50,6 +83,7 @@ int main()
         }
     }
     printMatrice(matrice);
-    printf("Il valore massimo è: %d" , max);
-    printf("\nAlle coordinate %d , %d: " , righe_max + 1, colonne_max + 1);
+    printf("Massimo %d", massimoMatrice(matrice));
+    printf("\n");
+    printf("Minimo %d", minimoMatrice(matrice));
 }
