@@ -1,0 +1,13 @@
+Set every element of matrix to ' '
+
+void clearMatrix(char matrix[dimension][dimension])
+{
+    int i, j;
+    for (i = 0; i < dimension; i++)
+    {
+        for (j = 0; j < dimension; j++)
+        {
+            matrix[i][j] == ' ';
+        }
+    }
+}

@@ -1,0 +1,31 @@
+void gamePrint(char matrix[dimension][dimension])
+{
+    int i, j;
+    for (i = 0; i < dimension; i++)
+    {
+        for (j = 0; j < dimension; j++)
+        {
+            if (j == 0)
+            {
+                printf(" %c", matrix[i][j]);
+            }
+            else if (j == 1)
+            {
+                printf(" %c ", matrix[i][j]);
+            }
+            else
+            {
+                printf(" %c", matrix[i][j]);
+            }
+
+            if (!(j > 1))
+            {
+                printf(" | ");
+            }
+        }
+        if (i != dimension - 1)
+        {
+            printf("\n-------------\n");
+        }
+    }
+}
