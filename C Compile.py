@@ -1,9 +1,13 @@
 import os
 
 filename = input("Source code name: ").strip().lower()
+while not filename in os.listdir():
+	filename = input("File not found!!\n Source code name:").strip().lower()
+	
+
 output_name = input("Output name: ").strip().lower()
 
-method = input("Compilation method:\n1. Direct\n2. Step by step\n3. Compile for Windows\nChoose option: ")
+method = input("Compilation method:\n1. Direct\n2. Step by step\nChoose option: ")
 
 global show_warnings
 show_warnings = input("Show warnings (y/n): ").strip().lower()
@@ -31,5 +35,8 @@ match method:
 		run(command,f'{output_name}.s',"-S")
 		run(command,f'{output_name}.o',"-c")
 		run(command, output_name)
-	case "3":
-		run(f'x86_64-w64-mingw32-gcc {filename}', f'{output_name}.exe')
+
+windows = input("Vuoi compilare anche per windows (y/n): ").strip().lower()
+windows = windows == "y"
+if windows:
+	run(f'x86_64-w64-mingw32-gcc {filename}', f'{output_name}.exe')
