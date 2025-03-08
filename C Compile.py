@@ -2,14 +2,29 @@ import os
 import platform
 import re
 
+title =  """
+Franciuto's                        _ _           
+                                  (_) |          
+   ___    ___ ___  _ __ ___  _ __  _| | ___ _ __ 
+  / __|  / __/ _ \| '_ ` _ \| '_ \| | |/ _ \ '__|
+ | (__  | (_| (_) | | | | | | |_) | | |  __/ |   
+  \___|  \___\___/|_| |_| |_| .__/|_|_|\___|_|   
+                            | |                  
+                            |_|                  
+"""
+
+print(title)
+
 # ASK FOR FILENAME
 filename = input("Source code name: ").strip().lower()
 # Check if the file is a .c source code
 while not filename.endswith(".c"):
 	filename = input("File is not .c source code!\nSource code name: ").strip().lower()
 # Check if the file is in the current shell directory
-while not filename in os.listdir():
-	filename = input("File not found!\nSource code name: ").strip().lower()
+while filename not in os.listdir():
+    files = [entry.name for entry in os.scandir() if entry.is_file() and entry.name.endswith(".c")]
+    print("Available .c files:", files)  # Ora stampa la lista correttamente
+    filename = input("File not found!\nSource code name: ").strip().lower()
 
 # ASK FOR OUTPUT NAME
 output_name = input("Output name: ")
