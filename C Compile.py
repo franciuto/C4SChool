@@ -6,6 +6,9 @@ title =  "Franciuto's C Compiler\nVersion 1.0\n"
 
 print(title)
 
+# SYSTEM IN USE
+system = platform.system().lower()
+
 # ASK FOR FILENAME
 filename = input("Source code name: ").strip().lower()
 # Check if the file is a .c source code
@@ -34,14 +37,23 @@ global show_warnings
 show_warnings = input("Show warnings (y/n): ").strip().lower()
 show_warnings = show_warnings == "y"
 
+# ASK IF STANDARD ANSI
+global standard_ansi
+standard_ansi = input("Use MinGW ANSI Studio compatibility (y/n): ")
+show_warnings = show_warnings == "y"
+
 # Basic command
 command = (f'gcc {filename}')
 
 def run (command, output, arguments = ""):
 	command += f' -o {output} {arguments}'
+	# Command addons
 	if show_warnings:
 		command += " -Wall -Wextra"
+	if standard_ansi and system == "windows":
+		command += " -D_USE_MINGW_ANSI_STUDIO"
 	
+	# Code execution
 	execution = os.system(command)
 	if execution == 0:
 		print("Compilation done!")
@@ -59,7 +71,7 @@ match method:
 		run(command, output_name)
 
 # If you are not on windows ask if you want to compile for Windows system (you need a porting of minGW on for your distribution)
-if platform.system().lower() != "windows":
+if system != "windows":
 	windows = input("Do you want to compile for Windows x86_64? (y/n): ").strip().lower()
 	windows = windows == "y"
 	if windows:
