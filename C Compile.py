@@ -2,23 +2,23 @@ import os
 import platform
 import re
 
+# TITLE
 title =  "Franciuto's C Compiler\nVersion 1.0\n"
-
 print(title)
 
 # SYSTEM IN USE
 system = platform.system().lower()
 
 # ASK FOR FILENAME
-filename = input("Source code name: ").strip().lower()
+filename = input("Source code name: ").strip()
 # Check if the file is a .c source code
 while not filename.endswith(".c"):
-	filename = input("File is not .c source code!\nSource code name: ").strip().lower()
+	filename = input("File is not .c source code!\nSource code name: ").strip()
 # Check if the file is in the current shell directory
-while filename not in os.listdir():
-    files = [entry.name for entry in os.scandir() if entry.is_file() and entry.name.endswith(".c")]
-    print("Available .c files:", files)  # Ora stampa la lista correttamente
-    filename = input("File not found!\nSource code name: ").strip().lower()
+while not any(f.lower() == filename.lower() for f in os.listdir()):
+    files = [entry.name for entry in os.scandir() if entry.is_file() and entry.name.lower().endswith(".c")]
+    print("Available .c files:", files)  # List available file
+    filename = input("File not found!\nSource code name: ").strip()
 
 # ASK FOR OUTPUT NAME
 output_name = input("Output name: ")
