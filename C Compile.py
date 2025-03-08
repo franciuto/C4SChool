@@ -2,7 +2,7 @@ import os
 import platform
 import re
 
-title =  "Franciuto's C Compiler\nVersion 1.0"
+title =  "Franciuto's C Compiler\nVersion 1.0\n"
 
 print(title)
 
