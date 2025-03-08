@@ -1,19 +1,34 @@
 import os
+import platform
+import re
 
+# ASK FOR FILENAME
 filename = input("Source code name: ").strip().lower()
+# Check if the file is a .c source code
+while not filename.endswith(".c"):
+	filename = input("File is not .c source code!\nSource code name: ").strip().lower()
+# Check if the file is in the current shell directory
 while not filename in os.listdir():
-	filename = input("File not found!!\n Source code name:").strip().lower()
-	
+	filename = input("File not found!\nSource code name: ").strip().lower()
 
-output_name = input("Output name: ").strip().lower()
+# ASK FOR OUTPUT NAME
+output_name = input("Output name: ")
+# Check if output name is correct
+while not re.match ("^[a-zA-Z0-9_-]{1,255}$", output_name):
+	output_name = input("Output name is not valid!\nOutput name: ").strip().lower()
 
+# ASK FOR METHOD
 method = input("Compilation method:\n1. Direct\n2. Step by step\nChoose option: ")
+# Check if method is correct
+while not method in ["1","2"]:
+	method = input("Method not found!\n1. Direct\n2. Step by step\nChoose option: ")
 
+# ASK IF SHOW WARNINGS
 global show_warnings
 show_warnings = input("Show warnings (y/n): ").strip().lower()
 show_warnings = show_warnings == "y"
 
-
+# Basic command
 command = (f'gcc {filename}')
 
 def run (command, output, arguments = ""):
@@ -27,6 +42,7 @@ def run (command, output, arguments = ""):
 	else:
 		print(execution)
 
+# Select your option
 match method:
 	case "1":
 		run(command, output_name)
@@ -36,7 +52,9 @@ match method:
 		run(command,f'{output_name}.o',"-c")
 		run(command, output_name)
 
-windows = input("Vuoi compilare anche per windows (y/n): ").strip().lower()
-windows = windows == "y"
-if windows:
-	run(f'x86_64-w64-mingw32-gcc {filename}', f'{output_name}.exe')
+# If you are not on windows ask if you want to compile for Windows system (you need a porting of minGW on for your distribution)
+if platform.system().lower() != "windows":
+	windows = input("Do you want to compile for Windows x86_64? (y/n): ").strip().lower()
+	windows = windows == "y"
+	if windows:
+		run(f'x86_64-w64-mingw32-gcc {filename}', f'{output_name}.exe')
