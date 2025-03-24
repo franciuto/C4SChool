@@ -55,12 +55,12 @@ int main()
 
     // Count prime number found by the classic method
     for (i = 2; i <= max; i++){
-        if (eratostene[i]) {
+        if (classic_method_mem[i]) {
             classic_found++;
         }
     }
-    printf("Numeri primi trovati con il metodo classico: %llu", eratostene_found);
-    // Libera la memoria
+    printf("Numeri primi trovati con il metodo classico: %llu", classic_found);
+    // Free the mem
     free(eratostene);
     free(classic_method_mem);
     return 0;
@@ -98,29 +98,28 @@ double classic_method(bool *classic, unsigned long long max)
     clock_t start = clock();
     unsigned long long n;
     
-    // Imposta tutti come non primi inizialmente
+    // Sets everything as non prime
     for (n = 0; n <= max; n++) {
         classic[n] = false;
     }
     
-    // Verifica ogni numero
+    // Test every num
     for (n = 2; n <= max; n++) {
         unsigned long long i;
         int is_prime = 1;
         
-        if (n <= 1) is_prime = 0;            // 1 e numeri minori non sono primi
-        else if (n == 2 || n == 3) is_prime = 1;  // 2 e 3 sono primi
-        else if (n % 2 == 0) is_prime = 0;    // Numeri pari maggiori di 2 non sono primi
+        if (n <= 1) is_prime = 0;            
+        else if (n == 2 || n == 3) is_prime = 1;  
+        else if (n % 2 == 0) is_prime = 0;    
         else {
             for (i = 3; i <= (unsigned long long)sqrt(n); i += 2) {
                 if (n % i == 0) {
-                    is_prime = 0;           // Non è primo perché ha un divisore
+                    is_prime = 0;         
                     break;
                 }
             }
         }
         
-        // Aggiorna l'array
         classic[n] = is_prime;
     }
     
