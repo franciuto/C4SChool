@@ -10,7 +10,6 @@ double classic_method(bool *classic, unsigned long long max);
 int main()
 {
     unsigned long long max, i, eratostene_found = 0, classic_found = 0; // Inizializzato a 0
-    double time_elapsed;    
     
     // User input3
     printf("Quanti numeri primi vuoi calcolare: ");
