@@ -22,7 +22,7 @@ int main()
     bool *classic_method_mem = (bool*) malloc((max + 1) * sizeof(bool));
     
     // Check for allocation
-    if (!eratostene || !classic_method)
+    if (!eratostene || !classic_method_mem)
     {
         printf("Errore allocazione di memoria");
         return 1;
@@ -59,7 +59,7 @@ int main()
             classic_found++;
         }
     }
-    printf("Numeri primi trovati con il metodo classico: %d", eratostene_found);
+    printf("Numeri primi trovati con il metodo classico: %llu", eratostene_found);
     // Libera la memoria
     free(eratostene);
     free(classic_method_mem);
