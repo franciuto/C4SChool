@@ -3,10 +3,15 @@
 
 #include <stdio.h>
 #include <stdbool.h>
+#include <stdlib.h>
+#include <time.h>
 
 // —— Input/Output ——
 /** Stampa il vettore v ben formattato [v1, v2, ..., vn] */
 void print_vec(const double *v, size_t dim);
+
+/** Stampa il vettore v INTERO ben formattato [v1, v2, ..., vn] */
+void print_int_vec(const int *v, size_t dim);
 
 /** Legge dim valori da stdin e li salva nel vettore v */
 void scanf_vec(double *v, size_t dim);
@@ -51,7 +56,7 @@ void rrot_vec(double *v, size_t step, size_t dim);
 void lrot_vec(double *v, size_t step, size_t dim);
 
 /** Copia n elementi da src a dest (n <= dim) */
-void slice_vec(const double *src, double *dest, int start, int n);
+void slice_vec(const double *src, double *dest, int start, int n, size_t dim);
 
 // —— Inizializzazione ——
 /** Riempie il vettore con valori casuali in [min, max] */
