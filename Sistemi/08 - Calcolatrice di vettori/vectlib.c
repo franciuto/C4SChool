@@ -285,5 +285,49 @@ double mean_vec(const double *v, size_t dim) {
 
 /** Restituisce il valore minimo */
 double min_vec(const double *v, size_t dim) {
-    
+    size_t i;
+    double min_val = v[0];
+    for (i = 0; i < dim; i++)
+    {
+        if (v[i] < min_val)
+        {
+            min_val = v[i];
+        }
+    }
+    return min_val;
+}
+
+/** Restituisce il valore massimo */
+double max_vec(const double *v, size_t dim) {
+    size_t i;
+    double max_val = v[0];
+    for (i = 0; i < dim; i++)
+    {
+        if (v[i] > max_val)
+        {
+            max_val = v[i];
+        }
+    }
+    return max_val;
+}
+
+/** Somma di tutti gli elementi */
+double sum_vec(const double *v, size_t dim) {
+    size_t i;
+    double total = 0;
+    for (i = 0; i < dim; i++)
+    {
+        total += v[i];
+    }
+    return total;
+}
+
+/** Confronta due vettori con tolleranza tol. Restituisce true se |v1_i - v2_i| < tol per tutti gli elementi */
+bool eq_vec(const double *v1, const double *v2, size_t dim, double tol) {
+    printf("Function not implemented yet");
+}
+
+/** Applica func a ogni elemento (modifica v direttamente) */
+void map_vec(double *v, size_t dim, double (*func)(double)) {
+    printf("Function not implemented yet");
 }

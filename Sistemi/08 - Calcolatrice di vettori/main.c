@@ -10,3 +10,4 @@ int main()
     rand_vec(v3, DIM, 1, 10);
     print_int_vec(v3, DIM);
 }
+

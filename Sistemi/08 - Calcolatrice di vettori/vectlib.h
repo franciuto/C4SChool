@@ -82,8 +82,8 @@ double min_vec(const double *v, size_t dim);
 /** Restituisce il valore massimo */
 double max_vec(const double *v, size_t dim);
 
-/** Somma di tutti gli elementi */
-double sum_vec(const double *v, size_t dim);
+    /** Somma di tutti gli elementi */
+    double sum_vec(const double *v, size_t dim);
 
 /** Confronta due vettori con tolleranza tol. Restituisce true se |v1_i - v2_i| < tol per tutti gli elementi */
 bool eq_vec(const double *v1, const double *v2, size_t dim, double tol);
