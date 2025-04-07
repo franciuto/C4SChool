@@ -1,3 +1,5 @@
+/* Program that prints 1 if the array contains all odd numbers*/
+
 #include <stdio.h>    // Input/output
 #include <time.h>     // srand, time()
 #include <stdlib.h>   // rand
