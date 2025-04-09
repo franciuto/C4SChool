@@ -4,13 +4,18 @@
 #include <time.h>     // srand, time()
 #include <stdlib.h>   // rand
 #define DIM 10        // Vector dimension
-#define RRANGE 20     // Random range
+#define RRANGE 100    // Random range
 
 int find_smaller (int *vector , int start, int end) {
     // Base case
     if (start == end) {
         return vector[start];
     }
+    // Recursive case: find the minimum of the rest of the array
+    int min_rest = find_smaller(vector, start + 1, end);
+
+    // Compare the current element with the minimum of the rest
+    return (vector[start] < min_rest) ? vector[start] : min_rest;
 }
 
 int main () {
