@@ -3,5 +3,5 @@
 
 int main () {
     int gasa = 120;
-    print_to_n(gasa);
+    printf("%d" , sum_digits(gasa));
 }

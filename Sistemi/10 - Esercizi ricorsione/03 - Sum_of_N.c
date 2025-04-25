@@ -1,4 +1,4 @@
-/* Progra to sum the digits of a number */
+/* Program to sum the digits of a number */
 #include <stdio.h>  // Basic I/O (pritnf / scanf)
 
 int sum (int n) {
