@@ -20,6 +20,7 @@ int main()
         printf(YELLOW "Binary format: " RESET "%s", bin);
         free(bin);
         free(ip_addr);
+        break;
     case 2:
         ip_addr = scanfIP();
         if (isValidIPv4(ip_addr) == 1)
@@ -30,11 +31,13 @@ int main()
         {
             printf(RED "IP is not valid" RESET);
         }
+        break;
     case 3:
         ip_addr = scanfIP();
         printf(BLUE "Insert CIDR: " RESET);
         scanf("%d" , &CIDR);
         calculateNetworkAddress(ip_addr, CIDR);
+        break;
     default:
         break;
     };
