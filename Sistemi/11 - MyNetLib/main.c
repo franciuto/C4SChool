@@ -11,6 +11,7 @@
 int main()
 {
     char *ip_addr;
+    int CIDR;
     switch (menu())
     {
     case 1:
@@ -30,7 +31,6 @@ int main()
             printf(RED "IP is not valid" RESET);
         }
     case 3:
-        int CIDR;
         ip_addr = scanfIP();
         printf(BLUE "Insert CIDR: " RESET);
         scanf("%d" , &CIDR);
