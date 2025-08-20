@@ -1,6 +1,6 @@
-#include <stdio.h>  // printf(), getchar()
-#include <stdlib.h> // calloc(), free()
-#include <string.h> // strlen()
+#include <stdio.h>  // printf(), getchar(), fgets(), fopen(), fclose(), fprintf(), rewind(), scanf()
+#include <stdlib.h> // calloc(), free(), exit(), strtol(), remove(), rename()
+#include <string.h> // strlen(), strncpy()
 
 // -- PREFERENCES --
 // File path stored as a constant so it can be changed hard coded
@@ -39,35 +39,33 @@ void menu()
     // Local char variable to store the user choice
     char choice;
 
-    // Repeat until a valid choice is made
-    while (1)
+    // Display menu and get user choice
+    printf("1. Add a question\n2. Delete question\n3. Answer the questionnaire\n4. Exit\n");
+
+    // Prompt user for choice
+    printf("Choose an option: ");
+    // MODIFICATO: Usiamo scanf con uno spazio per consumare eventuali newline residue.
+    scanf(" %c", &choice); 
+    while (getchar() != '\n')
+        ; // Remove \n if in the buffer
+
+    // Call correct function according to the user choice
+    switch (choice)
     {
-        printf("1. Add a question\n2. Delete question\n3. Answer the questionnaire\n4. Exit\n");
-
-        // Prompt user for choice
-        printf("Choose an option: ");
-        choice = getchar();
-        while (getchar() != '\n')
-            ; // Remove \n if in the buffer
-
-        // Call correct function according to the user choice
-        switch (choice)
-        {
-        case '1':
-            add_question();
-            return;
-        case '2':
-            delete_question();
-            return;
-        case '3':
-            printf("\n\nYour final score is %d\n\n", give_questionnaire());
-            return;
-        case '4':
-            exit(0);
-        default:
-            printf("\nInvalid choice, please try again\n");
-            break;
-        }
+    case '1':
+        add_question();
+        break;
+    case '2':
+        delete_question();
+        break;
+    case '3':
+        printf("\n\nYour final score is %d\n\n", give_questionnaire());
+        break;
+    case '4':
+        exit(0);
+    default:
+        printf("\nInvalid choice, please try again\n");
+        break;
     }
 }
 
@@ -86,11 +84,11 @@ void add_question()
 
     // -- QUESTION --
     // Declare a dynamic ANSWER_LENGTH chars buffer
-    char *question = calloc(ANSWER_LENGTH, sizeof(char));
+    char *question = calloc(QUESTION_LENGTH, sizeof(char));
 
     // Ask user to insert the question
-    printf("\nInsert the question (%d letters max): ", ANSWER_LENGTH);
-    fgets(question, ANSWER_LENGTH, stdin);
+    printf("\nInsert the question (%d letters max): ", QUESTION_LENGTH);
+    fgets(question, QUESTION_LENGTH, stdin);
 
     // Append the question in the file
     fprintf(file_descriptor, "%s", question);
@@ -109,8 +107,9 @@ void add_question()
 
     // -- Correct answer --
     printf("\nInsert correct answer for this question: ");
-    fprintf(file_descriptor, "%c\n\n", getchar() & 0x5F);
-
+    char correct = getchar() & 0x5F;
+    while (getchar() != '\n'); // svuota il buffer
+    fprintf(file_descriptor, "%c\n\n", correct);
     // Save changes to file
     fclose(file_descriptor);
     return;
@@ -130,17 +129,17 @@ void delete_question()
 
     // -- Question preview --
     int index = 1;
-    char temp_buffer[PREVIEW_LENGTH];
+    char temp_buffer[QUESTION_LENGTH];
 
-    // Iterate trought all lines of the file
-    while (fgets(temp_buffer, PREVIEW_LENGTH, file_descriptor))
+    // Iterate through all lines of the file
+    while (fgets(temp_buffer, QUESTION_LENGTH, file_descriptor))
     {
         // If longer than 50, abbr with "..."
-        if (strlen(temp_buffer) > 50)
+        if (strlen(temp_buffer) > PREVIEW_LENGTH)
         {
-            char temp[51];
-            strncpy(temp, temp_buffer, 50);
-            temp[50] = '\n';
+            char temp[PREVIEW_LENGTH + 1];
+            strncpy(temp, temp_buffer, PREVIEW_LENGTH);
+            temp[PREVIEW_LENGTH] = '\0';
             printf("%d. %s...\n", index, temp);
         }
         else
@@ -148,9 +147,9 @@ void delete_question()
             printf("%d. %s\n", index, temp_buffer);
         }
         // Skip answers and correct answer
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < 5; i++)
         {
-            if (!fgets(temp_buffer, PREVIEW_LENGTH, file_descriptor))
+            if (!fgets(temp_buffer, QUESTION_LENGTH, file_descriptor))
             {
                 break;
             }
@@ -160,13 +159,20 @@ void delete_question()
 
     // -- Select answer to delete --
     int to_delete = 0;
+    char input_buf[32];
     printf("Enter the number of question to delete (1-%d): ", index - 1);
-    scanf("%d", &to_delete);
+    if (!fgets(input_buf, sizeof(input_buf), stdin)) {
+        printf("Question does not exist!");
+        fclose(file_descriptor);
+        return;
+    }
+    to_delete = (int)strtol(input_buf, NULL, 10);
 
     // Check for input errors
-    if (to_delete < 1 || to_delete > index)
+    if (to_delete < 1 || to_delete > index - 1)
     {
         printf("Question does not exist!");
+        fclose(file_descriptor);
         return;
     }
 
@@ -178,26 +184,27 @@ void delete_question()
     // Go to the beginning of the main file
     rewind(file_descriptor);
     int current_question = 1;
-    // Biggest line present in the file
     char line[QUESTION_LENGTH];
     // Iterate on all lines of the file and copy them to the new file only if the current question is not marked to be deleted
     while (fgets(line, QUESTION_LENGTH, file_descriptor))
     {
         if (current_question == to_delete)
         {
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < 5; i++)
             {
-                fgets(line, QUESTION_LENGTH, file_descriptor);
+                if (!fgets(line, QUESTION_LENGTH, file_descriptor)) break;
             }
         }
         else
         {
-            for (int i = 0; i < 6; i++)
+            fputs(line, temp_file_descriptor);
+            for (int i = 0; i < 5; i++)
             {
                 if (fgets(line, QUESTION_LENGTH, file_descriptor))
                 {
                     fputs(line, temp_file_descriptor);
                 }
+                else break;
             }
         }
         current_question++;
@@ -211,11 +218,10 @@ void delete_question()
     return;
 }
 
-/* 
-Function: give_questionnaire
+/* Function: give_questionnaire
 Description: Prints the questions and checks for the user answers
 Input: void
-Output: user
+Output: user score
 */
 int give_questionnaire()
 {
@@ -223,41 +229,41 @@ int give_questionnaire()
     FILE *file_descriptor = fopen(FILEPATH, "r");
     check_file(file_descriptor);
 
-    // Display questions
     int current_question = 1;
     char line[QUESTION_LENGTH];
     int score = 0;
 
     while (fgets(line, QUESTION_LENGTH, file_descriptor))
     {
-        // Print question
         printf("Question n.%d: %s", current_question, line);
-        
+
         // Print answers
         for (int i = 0; i < 4; i++)
         {
             fgets(line, ANSWER_LENGTH, file_descriptor);
-            printf("Option %s" , line);   
+            printf("%s", line);
         }
-        
+
         printf("Your answer (A,B,C,D): ");
         char user_answer;
         scanf(" %c", &user_answer);
         user_answer &= 0x5F; // Uppercase masking
-        // Move the correct answer to "line" buffer
+
+        // Read correct answer
         fgets(line, ANSWER_LENGTH, file_descriptor);
         if (user_answer == *line) {
             score++;
             printf("Correct! Your score is %d\n\n", score);
         } else {
-            printf("Wrong!");
+            printf("Wrong!\n\n");
         }
-        
-        // Skip a line
+
+        // Skip empty line between questions
         fgets(line, ANSWER_LENGTH, file_descriptor);
-        
+
         current_question++;
     }
+    fclose(file_descriptor);
     return score;
 }
 
