@@ -35,4 +35,3 @@ Projects and exercises completed during my school journey to learn C programming
 - [Array Test](https://github.com/franciuto/C4School/tree/main/Verifica%20Array) - Array verification exercises
 - [C Test](https://github.com/franciuto/C4School/tree/main/Verifica%20C) - C programming test
 - [Matrices Test](https://github.com/franciuto/C4School/tree/main/Verifica%20Matrici) - Matrix operations test
->>>>>>> Stashed changes
