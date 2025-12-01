@@ -1,5 +1,4 @@
 # C4School
-<<<<<<< Updated upstream
 =======
 
 Projects and exercises completed during my school journey to learn C programming.
