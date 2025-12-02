@@ -22,14 +22,25 @@ ip_address_t *generate_random_ips(int ip_gen_n, char ip_gen_class, ip_address_t 
     // Decide quale metodo usare in base al numero di IP
     if (ip_gen_n < THRESHOLD_USE_POOL)
     {
+        // METODO 1: Pochi IP => random con retry per univocità
         int is_duplicato;
-        // METODO 1: Pochi IP -> Random con retry per evitare duplicati
         for (size_t i = 0; i < (size_t)ip_gen_n; i++)
         {
             do
             {
                 is_duplicato = 0;
-                generate_random_ip_by_class(&ip_gen[i], ip_gen_class);
+                
+                // Genera IP in base a netid o classe
+                if (netid.ip_num != 0)
+                {
+                    generate_random_ip_with_netid(&ip_gen[i], ip_gen_class, netid);
+                }
+                else
+                {
+                    generate_random_ip_by_class(&ip_gen[i], ip_gen_class);
+                }
+                
+                // Controlla duplicati
                 for (size_t j = 0; j < i; j++)
                 {
                     if (ip_gen[i].ip_num == ip_gen[j].ip_num)
@@ -43,16 +54,39 @@ ip_address_t *generate_random_ips(int ip_gen_n, char ip_gen_class, ip_address_t 
     }
     else
     {
-        // METODO 2: Tanti IP -> Genera pool completo e shuffle
-        // TODO: calcolare range IP disponibili per la classe
-        // TODO: generare pool ordinato
-        // TODO: shuffle del pool
+        // METODO 2: Tanti IP -> Pool completo + shuffle
+        // TODO: implementare anche il caso con netid
+        
+        uint32_t pool_size = 0;
+        ip_address_t *pool = generate_pool_by_class(ip_gen_class, &pool_size);
+        
+        if (pool == NULL)
+        {
+            free(ip_gen);
+            return NULL;
+        }
+        
+        // Verifica che ci siano abbastanza IP disponibili
+        if ((uint32_t)ip_gen_n > pool_size)
+        {
+            fprintf(stderr, "Errore: richiesti %d IP ma solo %u disponibili\n", 
+                    ip_gen_n, pool_size);
+            free(pool);
+            free(ip_gen);
+            return NULL;
+        }
+        
+        // Shuffle del pool (Fisher-Yates)
+        shuffle_pool(pool, pool_size);
+        
+        // Copia i primi ip_gen_n elementi
+        memcpy(ip_gen, pool, ip_gen_n * sizeof(ip_address_t));
+        
+        free(pool);
     }
 
     return ip_gen;
 }
-
-// ip_address_t generate_by_shuffling()
 
 void generate_random_ip_by_class(ip_address_t *ip, char class)
 {
@@ -114,6 +148,21 @@ void generate_random_ip_by_class(ip_address_t *ip, char class)
     *ip = uint32_into_ip(octets_to_uint32(oct1, oct2, oct3, oct4));
 }
 
+void generate_random_ip_with_netid(ip_address_t *ip, char class, ip_address_t netid)
+{
+    ip->class = class;
+    
+    uint32_t mask = 0xFFFFFFFF << (32 - netid.cidr);
+    uint32_t network = netid.ip_num & mask;
+    uint32_t host_bits = 32 - netid.cidr;
+    uint32_t max_hosts = (1UL << host_bits) - 2;
+    
+    uint32_t random_host = 1 + (rand() % max_hosts);
+    uint32_t new_ip = network | random_host;
+    
+    *ip = uint32_into_ip(new_ip);
+}
+
 void set_ip_type(int oct1, int oct2, char class, ip_address_t *ip)
 {
     if ((oct1 == 10) ||
@@ -131,42 +180,17 @@ void set_ip_type(int oct1, int oct2, char class, ip_address_t *ip)
         ip->type = IP_PUBLIC;
     }
 }
-
-/*
-void generate_random_ip_with_netid(ip_address_t *ip, char class, char *netid)
+// fisher-yates algorithm (chatgpt says it's the best one)
+void shuffle_pool(ip_address_t *pool, uint32_t pool_size)
 {
-    int octets[4] = {};
-
-    int cidr = 0;
-    char netid_copy[32];
-    strncpy(netid_copy, netid, sizeof(netid_copy) - 1);
-    netid_copy[sizeof(netid_copy) - 1] = '\0';
-
-    char *ip_part = strtok(netid_copy, "/");
-    char *cidr_part = strtok(NULL, "/");
-
-    if (cidr_part != NULL)
+    for (uint32_t i = pool_size - 1; i > 0; i--)
     {
-        cidr = atoi(cidr_part);
-    }
-
-    if (ip_part != NULL)
-    {
-        sscanf(ip_part, "%d.%d.%d.%d", &octets[0], &octets[1], &octets[2], &octets[3]);
-    }
-
-    char *ip_str = 0;
-
-    for (size_t i = 0; i < 4; i++)
-    {
-        if (octets[i] != 0)
-        {
-            sprintf(ip_str, "%d", &octets[i]);
-        }
-        else
-        {
-            // genera random octet e append to string
-        }
+        // Genera indice casuale tra 0 e i
+        uint32_t j = rand() % (i + 1);
+        
+        // Swap pool[i] con pool[j]
+        ip_address_t temp = pool[i];
+        pool[i] = pool[j];
+        pool[j] = temp;
     }
 }
-*/

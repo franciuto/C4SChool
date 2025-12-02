@@ -100,3 +100,99 @@ ip_address_t uint32_into_ip(uint32_t ip_num)
     
     return parsed_ip;
 }
+
+uint32_t calculate_pool_size_by_class(char class)
+{
+    switch (class)
+    {
+    case 'A':
+        // 1.0.0.1 - 126.255.255.254
+        // 126 reti × 256 × 256 × 254 host validi
+        return 126UL * 256 * 256 * 254;
+    
+    case 'B':
+        // 128.0.0.1 - 191.255.255.254
+        // 64 × 256 reti × 256 × 254 host
+        return 64UL * 256 * 256 * 254;
+    
+    case 'C':
+        // 192.0.0.1 - 223.255.255.254
+        // 32 × 256 × 256 reti × 254 host
+        return 32UL * 256 * 256 * 254;
+    
+    case 'D':
+        return 16UL * 256 * 256 * 256;
+    
+    case 'E':
+        return 16UL * 256 * 256 * 256;
+    
+    default:
+        return 32UL * 256 * 256 * 254; // Classe C di default
+    }
+}
+
+// Genera un pool di tutti gli IP validi per la classe
+ip_address_t *generate_pool_by_class(char class, uint32_t *pool_size)
+{
+    *pool_size = calculate_pool_size_by_class(class);
+    
+    ip_address_t *pool = (ip_address_t *)malloc(*pool_size * sizeof(ip_address_t));
+    if (pool == NULL)
+    {
+        return NULL;
+    }
+
+    uint32_t index = 0;
+    uint8_t oct1_start, oct1_end;
+    
+    // Determina il range del primo ottetto
+    switch (class)
+    {
+    case 'A':
+        oct1_start = 1;
+        oct1_end = 126;
+        break;
+    case 'B':
+        oct1_start = 128;
+        oct1_end = 191;
+        break;
+    case 'C':
+        oct1_start = 192;
+        oct1_end = 223;
+        break;
+    case 'D':
+        oct1_start = 224;
+        oct1_end = 239;
+        break;
+    case 'E':
+        oct1_start = 240;
+        oct1_end = 255;
+        break;
+    default:
+        oct1_start = 192;
+        oct1_end = 223;
+        break;
+    }
+
+    // Genera tutti gli IP validi
+    for (uint16_t oct1 = oct1_start; oct1 <= oct1_end; oct1++)
+    {
+        for (uint16_t oct2 = 0; oct2 < 256; oct2++)
+        {
+            for (uint16_t oct3 = 0; oct3 < 256; oct3++)
+            {
+                // Per classi A, B, C evita .0 e .255
+                uint16_t oct4_start = (class == 'D' || class == 'E') ? 0 : 1;
+                uint16_t oct4_end = (class == 'D' || class == 'E') ? 255 : 254;
+                
+                for (uint16_t oct4 = oct4_start; oct4 <= oct4_end; oct4++)
+                {
+                    pool[index] = uint32_into_ip(octets_to_uint32(oct1, oct2, oct3, oct4));
+                    index++;
+                }
+            }
+        }
+    }
+
+    return pool;
+}

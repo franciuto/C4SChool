@@ -27,4 +27,7 @@ uint32_t ipstr_to_uint32(char *ip_str);
 ip_address_t parse_ip (char *ip_str);
 ip_address_t uint32_into_ip(uint32_t ip_num);
 
+uint32_t calculate_pool_size_by_class(char class);
+ip_address_t *generate_pool_by_class(char class, uint32_t *pool_size);
+
 #endif
